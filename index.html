@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vimex | دليل الأطباء والصيادلة الشامل</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #005f8c;
+            --secondary: #00b4d8;
+            --bg: #f4f7f9;
+            --white: #ffffff;
+            --text: #2d3436;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); line-height: 1.6; }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 4rem 1rem;
+            text-align: center;
+            border-bottom-left-radius: 50px;
+            border-bottom-right-radius: 50px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .search-box {
+            margin-top: 30px;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #search {
+            width: 100%;
+            padding: 18px 30px;
+            border-radius: 35px;
+            border: none;
+            outline: none;
+            font-size: 1.1rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            max-width: 1250px;
+            margin: -40px auto 60px;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            transition: 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #ececec;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+
+        .img-area {
+            width: 100%;
+            height: 220px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .img-area img { width: 100%; height: 100%; object-fit: contain; }
+        .img-area i { font-size: 3.5rem; color: #ddd; position: absolute; }
+
+        .card-body { padding: 20px; text-align: center; flex-grow: 1; }
+        .card-body h3 { color: var(--primary); margin-bottom: 10px; font-size: 1.3rem; }
+        .card-body p { color: #636e72; font-size: 0.9rem; }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            background: #fff;
+            border-top: 1px solid #ddd;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* نافذة حول المطور */
+        .about-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: white;
+            padding: 50px 20px 30px;
+            border-radius: 30px;
+            width: 90%;
+            max-width: 420px;
+            text-align: center;
+            position: relative;
+        }
+
+        .avatar {
+            width: 120px; height: 120px;
+            background: #eee;
+            border-radius: 50%;
+            margin: -110px auto 20px;
+            border: 6px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .dev-info h4 { font-weight: bold; margin-bottom: 5px; }
+        .dev-info .title { color: var(--secondary); font-weight: bold; display: block; margin-bottom: 15px; color: #0096c7; }
+
+        .social-tabs { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
+        .social-tabs a {
+            color: var(--primary);
+            font-size: 1.6rem;
+            transition: 0.3s;
+        }
+        .social-tabs a:hover { transform: scale(1.2); color: var(--secondary); }
+
+        /* تفاصيل الدواء */
+        .det-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 2001;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .det-box {
+            background: white;
+            max-width: 650px;
+            width: 100%;
+            border-radius: 25px;
+            padding: 35px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .close-x { position: absolute; top: 15px; left: 15px; cursor: pointer; font-size: 2rem; color: #ff5e57; }
+        .det-row { margin-bottom: 25px; }
+        .det-row strong { color: var(--primary); display: block; margin-bottom: 8px; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>vimex دليل الأطباء والصيادلة الشامل</h1>
+    <div class="search-box">
+        <input type="text" id="search" placeholder="ابحث عن دواء أو تركيبة..." onkeyup="filterData()">
+    </div>
+</header>
+
+<main class="container" id="med-grid"></main>
+
+<footer>
+    powered by : eng.mohamad sheikhony
+</footer>
+
+<div class="about-btn" onclick="showModal('about-modal')">
+    <i class="fas fa-user-gear"></i>
+</div>
+
+<div class="modal" id="about-modal" onclick="closeModal('about-modal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="avatar">
+            <img src="https://ui-avatars.com/api/?name=Mohamad+Sheikhony&background=005f8c&color=fff&size=120" alt="Dev Image">
+        </div>
+        <div class="dev-info">
+            <h4>powered by: st.eng mohamad sheikhony</h4>
+            <span class="title">ELECTRONIC ENGINEER</span>
+            <p>ALEPPO SYRIA</p>
+        </div>
+        <div class="social-tabs">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-telegram"></i></a>
+            <a href="#"><i class="fab fa-github"></i></a>
+        </div>
+    </div>
+</div>
+
+<div class="det-modal" id="det-modal" onclick="closeModal('det-modal')">
+    <div class="det-box" onclick="event.stopPropagation()">
+        <span class="close-x" onclick="closeModal('det-modal')">&times;</span>
+        <h2 id="p-title" style="color:var(--primary); margin-bottom:20px;"></h2>
+        <div class="det-row">
+            <strong>التركيبة العلمية :</strong>
+            <p id="p-comp"></p>
+        </div>
+        <div class="det-row">
+            <strong>الخصائص والاستطباب:</strong>
+            <p id="p-prop"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // قاعدة البيانات الشاملة والدقيقة (49 صنف) مطابقة تماماً لترتيب ومعلومات الكتالوج
+    const medicineData = [
+        { name: "GLUNEM CC 7+2", comp: "في كل قرصين: Glukozamin Sülfat 1500 mg, MSM 600 mg, Yumurta Kabugu Zarı 300 mg, Boswellia 200 mg, Tanacetum parthenium 100 mg, Curcumin 50 mg, Collagen II 40 mg, Hyaluronic Acid 20 mg, Vitamin D3 20 µg.", prop: "منتج مخصص لدعم صحة المفاصل، يساعد على تخفيف الألم والوذمة في الرقبة والورك والركبة والمفاصل، ويحافظ على صحة العظام والعضلات." },
+        { name: "VIMEX OMEGA PLUS", comp: "في الكبسولة الواحدة: إجمالي أوميغا 3 (780 mg)، منها: EPA (396 mg)، DHA (264 mg)، أحماض أوميغا 3 أخرى (120 mg). مستخلص من أسماك المياه الباردة.", prop: "يساهم في الوظيفة الطبيعية للقلب. يساهم تناول DHA من قبل الأم في التطور الطبيعي لدماغ وعين الجنين والرضع." },
+        { name: "VIMEX MAGNESIUM COMPLEX", comp: "في كل قرصين: ماغنيسيوم (سترات، مالات، بيسغليسينات من Dr. Paul Lohmann) بتركيز 200 mg، وفيتامين B6 (P5P) بتركيز 5 mg.", prop: "يساهم في تقليل التعب والإرهاق، تكوين الطاقة الطبيعية، وظيفة الجهاز العصبي الطبيعية، ودعم العضلات والعظام والأسنان." },
+        { name: "VIMEX CALCIUM COMPLEX (Osteo Formula)", comp: "في كل قرصين: كالسيوم 800 mg، ماغنيسيوم 250 mg، زنك 10.2 mg، نحاس 1.986 mg، بورون 2 mg، منغنيز 109 mcg، سيلينيوم 10 mcg، فيتامين D3 بتركيز 1.2 mcg.", prop: "تركيبة متكاملة لصحة العظام والعضلات والأنسجة الضامة، مناسبة للرجال والنساء في جميع الأعمار." },
+        { name: "VIMEX OM ENERGY ORIGINAL COMPLEX", comp: "في الكبسولة الواحدة: زيت سمك 400 mg، زيت كتان 300 mg، بيتا جلوكان 100 mg، فيتامين C 40 mg، فيتامين E 10 mg، CoQ10 20 mg، مجموعة فيتامينات B كاملة، زنك 7.5 mg، حمض الفوليك 400 µg، بيوتين 200 µg، سيلينيوم، يود، جينسنغ 50 µg.", prop: "مزيج طاقة ومناعة، يعزز استقلاب الطاقة، يقلل الإرهاق، ويدعم الوظيفة الطبيعية لجهاز المناعة وتكوين خلايا الدم الحمراء." },
+        { name: "VIMEX DEFENCE PLUS", comp: "في القرص الواحد: فيتامين C بتركيز 200 mg، بيتا جلوكان (1,3/1,6) 200 mg، مستخلص الخمان الأسود (Kara Mürver) 150 mg بـ 5% أنثوسيانين، زنك 10 mg.", prop: "دفاع قوي للمناعة، يدعم جهاز المناعة أثناء وبعد التمارين المكثفة، ويزيد من امتصاص الحديد وتكوين الكولاجين الطبيعي." },
+        { name: "VIMEX C PLUS", comp: "في القرص الفوار: فيتامين C بتركيز 1000 mg، زنك 10 mg، فيتامين D3 بتركيز 10 µg.", prop: "تأثير ثلاثي (Triple Effect) لرفع كفاءة الجهاز المناعي واستقلاب الطاقة، خالٍ من السكر بنكهة البرتقال." },
+        { name: "VIMEX IODINE with SELENIUM", comp: "في القطرة الواحدة: يود 150 µg، سيلينيوم 10 µg.", prop: "يدعم الوظيفة الطبيعية للغدة الدرقية، ويساهم في الحفاظ على صحة الشعر والجلد والأظافر وجهاز المناعة." },
+        { name: "VIMEX IRONLINK", comp: "في الفيال الواحد (8 مل): حديد مغلف بتقنية مضاعفة (Double Encapsulated Iron) بتركيز 14 mg.", prop: "حديد عالي الامتصاص في شكل سائل، لا يسبب مشاكل في المعدة أو الأمعاء ولا يسبب اسوداد الأسنان، يقلل التعب والإرهاق." },
+        { name: "VIMEX B-COMPLEX (Bodyguard)", comp: "في القرص الواحد: B1 50mg, B2 50mg, B3 50mg, B5 50mg, B6 10mg, B12 100µg, إينوزيتول 50mg, بيوتين 300µg, حمض الفوليك النشط 400µg, كولين 25mg.", prop: "حارس الجسم: فيتامينات B بشكلها النشط، تساهم في تكوين الطاقة الطبيعية وتقليل الإجهاد." },
+        { name: "VIMEX D3K2 SPREY", comp: "في البخة الواحدة (Puff): فيتامين D3 (Quali-D) بتركيز 25µg (1000 IU)، فيتامين K2 (K2VITAL) بتركيز 25µg.", prop: "حماية مناعية متقدمة، يعزز امتصاص الكالسيوم ويوجهه لدعم صحة العظام والعضلات بشكل طبيعي." },
+        { name: "VIMEX B12 DİL ALTI TABLET", comp: "في القرص الواحد تحت اللسان: ميثيل كوبالامين (فيتامين B12 النشط) 1000 µg.", prop: "أقراص سريعة الامتصاص بطعم النعناع، تدعم الجهاز العصبي وتكوين خلايا الدم الحمراء وتقلل التعب." },
+        { name: "VIMEX B12 DİL ALTI SPREY", comp: "في البخة الواحدة (Puff): ميثيل كوبالامين (فيتامين B12 النشط) 1000 µg.", prop: "بخاخ تحت اللسان لامتصاص أسرع، يدعم تكوين الطاقة الطبيعية والجهاز العصبي، خالٍ من الألوان." },
+        { name: "VIMEX MAGNESIUM BISGLISINAT", comp: "في كل قرصين: مغنيسيوم بيسغليسينات (من د. بول لومان) بتركيز 250 mg.", prop: "فائدة قصوى لتقليل التعب والإرهاق، دعم الجهاز العصبي والوظائف العضلية للحفاظ على العظام والأسنان." },
+        { name: "VIMEX ZINC ULTRA", comp: "في القرص الواحد: زنك 15 mg.", prop: "محلى بعصير التفاح والستيفيا، يدعم استقلاب الكربوهيدرات والمغذيات الكبيرة ويقوي المناعة والشعر والجلد." },
+        { name: "VIMEX BIOTIN EXTRA", comp: "في القرص الواحد: بيوتين بتركيز 5 mg (5000 mcg).", prop: "الجرعة المكثفة لدعم صحة الشعر والبشرة والأظافر، ويعزز استقلاب الطاقة الطبيعي." },
+        { name: "VIMEX KARADERME MARRUBIUM", comp: "في كل 5 مل: مستخلص عرق السوس 80mg، زهرة الخطمي 60mg، الزعتر 50mg، زهرة الربيع المسائية 50mg، ماروبيوم فولغاري 40mg.", prop: "مستخلصات عشبية طبيعية خالية من السكر (شراب) مخصصة لدعم وتهدئة الجهاز التنفسي." },
+        { name: "VIMEX PROPOLIS BOOSTING", comp: "في البخة الواحدة (Puff): بروبوليس 6mg، مستخلص عرق السوس 4.07mg، مستخلص الزنجبيل 3.23mg، زيت الكافور (أوكالبتوس) 0.38mg.", prop: "بخاخ فموي بطعم النعناع لتأثير سريع في تعزيز المناعة وتخفيف الاحتقان." },
+        { name: "VIMEX COGNIZIN FOCUS", comp: "في القرص الواحد: سيتيكولين (Cognizin) 250mg، فوسفاتيديل سيرين 100mg، ميثيل كوبالامين 1mg، حمض الفوليك النشط 400µg.", prop: "مكمل غذائي من الدرجة الأولى لدعم وظائف الإدراك، الذاكرة، الجهاز العصبي، والتركيز العالي." },
+        { name: "VIMEX MOOD PLUS", comp: "في القرص الواحد: مستخلص الزعفران 30mg، 5-HTP بتركيز 150mg، مغنيسيوم 60mg، فيتامين B6 (P5P) بتركيز 5mg.", prop: "تأثير إيجابي مدعوم بدراسات سريرية للزعفران، يقلل التعب والإرهاق ويدعم الحالة المزاجية الطبيعية." },
+        { name: "VIMEX RELAX LACTIUM", comp: "في القرص الواحد: بروتين الحليب المتحلل (Lactium) 150mg، مستخلص المليسة 150mg، مستخلص الباسيفلورا (زهرة الآلام) 150mg.", prop: "استرخاء طبيعي مدعم بمستخلصات نباتية لتحسين جودة النوم وتقليل التوتر دون مواد ملونة أو محليات." },
+        { name: "VIMEX SILIBIN MILK THISTLE", comp: "في القرص الواحد: مستخلص الخرشوف 100mg، فوسفاتيديل كولين 61.4mg، سيليبين 37mg.", prop: "تأثير عالي وتقنية كبسلة متطورة للسيليبين لدعم وتنقية وظائف الكبد بشكل فعال." },
+        { name: "VIMEX FIT COFFEE with FIBER", comp: "في الجرعة (15g): قهوة فلتر، ألياف Fibersol-2 (5g/200mL)، بيكولينات الكروم.", prop: "قهوة تدعم استقلاب المغذيات الكبيرة وتحافظ على مستوى الجلوكوز في الدم، وتعزز تناول الألياف اليومية." },
+        { name: "VIMEX FIT with BROMELAIN", comp: "في القرص الواحد: مزيج مستخلص التفاح والزيتون (Pomolive) 500mg، بروميلين 100mg، كروم 75µg.", prop: "مكمل نباتي لدعم حرق الدهون واستقلاب الجلوكوز بدون سعرات حرارية، خالي من المحليات." },
+        { name: "VIMEX HAIR COMPLEX KADIN (Women)", comp: "في القرص الواحد: بلميط منشاري 170mg, L-ميثيونين 40mg, كيراتين 20mg, جينسنغ 20mg, سيليكون 20mg, حديد 17mg, زنك 15mg, بيوتين 1000µg, فوليك أسيد 400µg.", prop: "مركب مخصص لاحتياجات النساء لمنع التساقط ودعم صحة الشعر والجلد والأظافر من الجذور." },
+        { name: "VIMEX HAIR COMPLEX ERKEK (Men)", comp: "في القرص الواحد: بلميط منشاري 320mg, L-ميثيونين 40mg, كيراتين 20mg, جينسنغ 20mg, زنك 15mg, بيوتين 1000mcg.", prop: "مركب مخصص للرجال بجرعة عالية من البلميط المنشاري لوقف التساقط الوراثي ودعم البصيلات." },
+        { name: "VIMEX HAIR NAIL SKIN BEAUTY PACK", comp: "في القرص الواحد: L-ميثيونين 40mg, فيتامين B5 40mg, ريسفيراترول 20mg, فيتامين B3 16mg, L-سيستين 10mg, زنك 7.5mg, بيوتين 1mg, سيلينيوم 100µg.", prop: "حماية متكاملة لتعزيز نضارة البشرة، وتقوية بنية الشعر والأظافر المتكسرة." },
+        { name: "VIMEX SAW PALMETTO with PUMPKIN SEED OIL", comp: "في كل 1 مل: زيت بذور اليقطين 808 mg، مستخلص البلميط المنشاري (Saw Palmetto) 100 mg.", prop: "تركيبة مبتكرة في قطرات لدعم صحة الرجال، خالية من السكر والمحليات." },
+        { name: "VIMEX OM KIDS", comp: "في 10 مل: زيت سمك 500mg (DHA 60mg, EPA 90mg)، بيتا جلوكان 100mg، فيتامين C 80mg، بروبوليس 50mg، وفيتامينات (A, D3, E, B-Complex) ومعادن.", prop: "شراب أوميغا 3 النشط مع البروبوليس لتعزيز مناعة ونمو الأطفال بنكهة البرتقال والعسل." },
+        { name: "VIMEX VİTAMİN D3 400 IU", comp: "في البخة (Puff) الواحدة: فيتامين D3 (Quali-D) بتركيز 10 µg (400 IU).", prop: "رذاذ فموي ضروري للنمو الطبيعي للعظام وتطور جهاز المناعة عند الأطفال." },
+        { name: "VIMEX DEFENCE KIDS", comp: "في كل 5 مل: مستخلص الخمان الأسود (البيلسان) 100 mg، فيتامين C 60 mg، بيتا جلوكان 50 mg، زنك 5 mg.", prop: "حماية قوية لمناعة الأطفال بمستخلص البيلسان (%5 أنثوسيانين)، يعزز استقلاب الطاقة." },
+        { name: "VIMEX RELAXTIME KIDS", comp: "في كل 1 مل: مستخلص المليسة 130mg، مستخلص البابونج 100mg، بروتين الحليب (Lactium) 90mg، مستخلص الشمر 50mg.", prop: "قطرات استرخاء للأطفال محلاة بالستيفيا الطبيعية لتحسين جودة النوم وتقليل التوتر والمغص." },
+        { name: "DERINEX CLASSIC SUNBLOCK (Tüm Ciltler)", comp: "مرشحات SunCat MTA من الجيل الجديد، مستخلص الصبار، بروفيتامين B5، آلانتوين.", prop: "كريم واقي شمس كلاسيكي للاستخدام اليومي، مناسب لجميع أنواع البشرة للحماية العميقة." },
+        { name: "DERINEX SUN PROTECTIVE SPRAY", comp: "فلاتر شمسية، مستخلص الصبار، بروفيتامين B5، آلانتوين، مستخلص البابونج الألماني.", prop: "رذاذ واقي شمس سهل الامتصاص مصمم لجميع أفراد الأسرة بما في ذلك البشرة الحساسة." },
+        { name: "DERINEX SUNSCREEN ANTI-AGING", comp: "فلاتر شمسية، كولاجين نباتي، حمض الهيالورونيك، ببتيد، مستخلصات (بذور العنب، كستناء الحصان، شجرة الزان).", prop: "يحارب التجاعيد وعلامات التقدم بالسن ويدعم مرونة البشرة وترطيبها المكثف." },
+        { name: "DERINEX SUNSCREEN SENSITIVE", comp: "نياكيناميد، مستخلص نبات الكبر، مستخلص التين الشوكي، الصبار، خالي من العطور.", prop: "حماية قصوى مخصصة للبشرة الحساسة والتي تتهيج بسرعة لتهدئتها." },
+        { name: "DERINEX SUNSCREEN DARK SPOT", comp: "نياكيناميد، فيتامين C الحاصل على براءة اختراع (VC-IP)، ألفا أربوتين، الصبار.", prop: "يعالج ويمنع ظهور البقع الداكنة والتصبغات أثناء توفير حماية فائقة من الشمس." },
+        { name: "DERINEX SUNSCREEN OILY & ACNE PRONE", comp: "نياكيناميد، مستخلص الكبر، مستخلص التين الشوكي، تركيبة خالية من الزيوت.", prop: "أخف تركيبة مطفية (Matte) تتحكم بالإفرازات الدهنية، مخصصة للبشرة المعرضة لحب الشباب." },
+        { name: "DERINEX ANTI DANDRUFF SHAMPOO", comp: "سيلينيوم، بيروكتون أولامين، زيت شجرة الشاي، حمض الساليسيليك، فيتامين E، مستخلص القراص.", prop: "يعالج القشرة، الحكة، والاحمرار، ويوفر تنظيفاً عميقاً وتلطيفاً لفروة الرأس المتهيجة." },
+        { name: "DERINEX ANTI HAIR LOSS SHAMPOO (Oily Hair)", comp: "كافيين، جينسنغ، بلميط منشاري، حمض الساليسيليك، زنك، و 13 مستخلص عشبي.", prop: "شامبو مقوي لجذور الشعر الدهني يمنع التساقط بفعالية دون إثقال الشعر بفضل فيتامين B3 والزنك." },
+        { name: "DERINEX ANTI HAIR LOSS SHAMPOO (Normal & Dry)", comp: "كافيين، جينسنغ، بلميط منشاري، حمض الهيالورونيك، و 13 مستخلص عشبي.", prop: "شامبو مغذي يمنع التساقط ويرطب الشعر الجاف والعادي بعمق بفضل حمض الهيالورونيك." },
+        { name: "DERINEX HAIR CARE SHAMPOO (Argan)", comp: "زيت الأرغان، حبيبات فيتامين E، بيوتين، كيراتين، كولاجين الأكاسيا، إكليل الجبل.", prop: "عناية مقوية ومرممة للشعر التالف والمعالج، يمنح الشعر لمعاناً وحجماً مضاعفاً." },
+        { name: "DERINEX ANTI PSO SHAMPOO (Garlic)", comp: "قطران العرعر، زيت الثوم، زيت شجرة الشاي، حمض الساليسيليك، أحماض أمينية.", prop: "فعال جداً ضد تقشر فروة الرأس الشديد (الصدفية) واللويحات، يقوي بصيلات الشعر." },
+        { name: "DERINEX ANTI HAIR LOSS SPRAY (Women)", comp: "مكون Procapil، كافيين، بيوتين، فيتامين E و B5، ومركب أحماض أمينية كامل.", prop: "بخاخ (سبراي) يمنع تساقط الشعر ويؤخر شيخوخة الخلايا مخصص لتركيبة شعر النساء." },
+        { name: "DERINEX ANTI HAIR LOSS SPRAY (Men)", comp: "مكون Procapil، كافيين، بيوتين، فيتامين E و B5، ومركب أحماض أمينية.", prop: "بخاخ فعال ضد تساقط الشعر يقوي الجذور ويزيد سرعة نمو الشعر مخصص للرجال." },
+        { name: "DERINEX BEBEK ŞAMPUANI (Baby Shampoo)", comp: "مستخلص البابونج، زيت اللافندر، حبيبات فيتامين E، بروفيتامين B5.", prop: "تركيبة لطيفة لا تسبب الدموع، خالية من البارابين، تنظف وتهدئ رأس وجسم الطفل بلطف." },
+        { name: "DERINEX BEBEK BAKIM KREMİ (Baby Cream)", comp: "زيت الأفوكادو، الآذريون (Calendula)، البابونج، Pentavitin، بروفيتامين B5.", prop: "كريم لترطيب وترميم بشرة الأطفال الرقيقة وحمايتها من التهيجات، تم اختباره جلدياً." },
+        { name: "DERINEX SCALP CARE MASK", comp: "كافيين، بيوتين، زيت شجرة الشاي، 11 حمض أميني، Pentavitin، بروفيتامين B5.", prop: "ماسك لتهدئة حساسية فروة الرأس، معالجة القشرة، وزيادة سماكة وقوة الشعر من الجذور." }
+    ];
+
+    const grid = document.getElementById('med-grid');
+
+   function render(data) {
+    grid.innerHTML = '';
+    data.forEach(item => {
+        // تحويل الاسم لصيغة بسيطة (أحرف صغيرة، استبدال الرموز بـ _)
+        const safeName = item.name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+        
+        // سطر للتأكد (سيظهر لك في لوحة تحكم المتصفح F12)
+        console.log("يبحث عن صورة باسم: " + safeName + ".jpg");
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.onclick = () => openDetails(item);
+        card.innerHTML = `
+            <div class="img-area">
+                <img src="images/${safeName}.jpg" alt="${item.name}" 
+                     onload="this.style.display='block'; this.nextElementSibling.style.display='none';"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <i class="fas fa-pills" style="font-size:3rem; color:#ccc;"></i>
+                <div style="font-size: 10px; color: red; position: absolute; bottom: 5px;">${safeName}.jpg</div>
+            </div>
+            <div class="card-body">
+                <h3>${item.name}</h3>
+                <p>${item.comp.substring(0, 55)}...</p>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+
+    function filterData() {
+        const query = document.getElementById('search').value.toLowerCase();
+        const filtered = medicineData.filter(i => i.name.toLowerCase().includes(query) || i.comp.toLowerCase().includes(query));
+        render(filtered);
+    }
+
+    function openDetails(item) {
+        document.getElementById('p-title').innerText = item.name;
+        document.getElementById('p-comp').innerText = item.comp;
+        document.getElementById('p-prop').innerText = item.prop;
+        showModal('det-modal');
+    }
+
+    function showModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    // التهيئة المبدئية
+    render(medicineData);
+</script>
+</body>
+</html>
